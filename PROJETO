@@ -1,0 +1,9 @@
+1. API CRUD de Usuários
+
+Funcionalidades: cadastro, login, listagem, atualização e exclusão de usuários.
+
+Tecnologias: Node.js, Express, MongoDB (Mongoose).
+
+Extras: autenticação com JWT, validação com Zod ou Joi, hash de senha com bcrypt.
+
+Por que é bom? Projeto clássico que demonstra habilidades básicas e segurança.
