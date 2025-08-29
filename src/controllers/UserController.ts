@@ -25,7 +25,7 @@ export const UserController = {
 
     async createUser(req: Request, res: Response) {
         try {
-            const { data } = req.body;
+            const data = req.body;
             const user = await User.createUser(data);
             res.status(201).json(user);
         } catch (error) {

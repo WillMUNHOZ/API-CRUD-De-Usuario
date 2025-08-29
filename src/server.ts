@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { config } from "dotenv";
 import cors from "cors";
+import { router } from "./routes/UserRoutes";
 
 config();
 
@@ -19,6 +20,8 @@ if (!MONGO_URI) {
 };
 
 app.get("/", (req, res) => res.send("🚀 Server initialized!"));
+
+app.use(router);
 
 mongoose
     .connect(MONGO_URI)
