@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
+import { userSchema } from "../schemas/UserSchema";
 
 const User = new UserService();
 
@@ -25,7 +26,7 @@ export const UserController = {
 
     async createUser(req: Request, res: Response) {
         try {
-            const data = req.body;
+            const data = userSchema.parse(req.body);
             const user = await User.createUser(data);
             res.status(201).json(user);
         } catch (error) {
@@ -36,7 +37,7 @@ export const UserController = {
     async updateUser(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const { data } = req.body;
+            const data = userSchema.parse(req.body);
             const user = await User.updateUser(id, data);
             res.status(201).json(user);
         } catch (error) {
@@ -47,7 +48,7 @@ export const UserController = {
     async deleteUser(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const user = await User.deleteUser(id);
+            await User.deleteUser(id);
             res.status(200).json({ message: "User deleted" });
         } catch (error) {
             res.status(400).json({ error: error.errors || error.message });

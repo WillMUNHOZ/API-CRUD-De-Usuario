@@ -9,5 +9,5 @@ router.route("/users")
 
 router.route("/users/:id")
     .get(UserController.getUser)
-    .post(UserController.updateUser)
+    .put(UserController.updateUser)
     .delete(UserController.deleteUser)

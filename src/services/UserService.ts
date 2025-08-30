@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { UserRepository } from "../repositories/UserRepository"
-import { IUser } from "../schemas/IUser";
+import { IUser } from "../models/IUser";
 import bcrypt from "bcrypt";
 
 export class UserService {
@@ -9,11 +9,11 @@ export class UserService {
     }
 
     async getUserById(id: string) {
-        if (!mongoose.Types.ObjectId.isValid) {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error("Invalid Id");
         };
 
-        const user = UserRepository.findById(id);
+        const user = await UserRepository.findById(id);
         if (!user) {
             throw new Error("User not found");
         };
@@ -40,40 +40,38 @@ export class UserService {
         return UserRepository.create(newUser);
     }
 
-    async updateUser(id: string, data: IUser) {
+    async updateUser(id: string, data: any) {
 
-        if (!mongoose.Types.ObjectId.isValid) {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error("Invalid Id");
         };
 
         const { name, email, password } = data;
 
-        if (name && email && !password) {
+        if (!name && !email && !password) {
             throw new Error("At least one field must be sent");
         };
 
-        const userExists = UserRepository.findById(id);
-        if (!userExists) {
+        const exists = await UserRepository.findById(id);
+        if (!exists) {
             throw new Error("User not found");
         };
 
-        const passwordHash = await bcrypt.hash(password, 10);
+        const user: Partial<IUser> = {};
 
-        const user = {
-            name,
-            email,
-            password: passwordHash
-        };
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (password) user.password = await bcrypt.hash(password, 10);
 
         return UserRepository.update(id, user);
     }
 
     async deleteUser(id: string) {
-        if (!mongoose.Types.ObjectId.isValid) {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error("Invalid Id");
         };
 
-        const userExists = UserRepository.findById(id);
+        const userExists = await UserRepository.findById(id);
         if (!userExists) {
             throw new Error("User not found");
         };

@@ -1,5 +1,5 @@
 import { User } from "../models/User"
-import { IUser } from "../schemas/IUser";
+import { IUser } from "../models/IUser";
 
 
 export const UserRepository = {
@@ -22,7 +22,7 @@ export const UserRepository = {
         return user;
     },
 
-    async update(id: string, data: IUser) {
+    async update(id: string, data: Partial<IUser>) {
         return await User.findByIdAndUpdate(id, data, { new: true }).select("-password");
     },
 
