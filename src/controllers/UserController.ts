@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { UserService } from "../services/UserService";
-import { userSchema } from "../schemas/UserSchema";
+import { UserService } from "../services/UserService.js";
+import { userSchema, userUpdateSchema } from "../schemas/userSchema.js";
 
 const User = new UserService();
 
@@ -9,7 +9,7 @@ export const UserController = {
         try {
             const users = await User.getAllUsers();
             res.status(200).json(users);
-        } catch (error) {
+        } catch (error: any) {
             res.status(400).json({ error: error.errors || error.message });
         }
     },
@@ -19,7 +19,7 @@ export const UserController = {
             const { id } = req.params;
             const user = await User.getUserById(id);
             res.status(200).json(user);
-        } catch (error) {
+        } catch (error: any) {
             res.status(400).json({ error: error.errors || error.message });
         }
     },
@@ -29,7 +29,7 @@ export const UserController = {
             const data = userSchema.parse(req.body);
             const user = await User.createUser(data);
             res.status(201).json(user);
-        } catch (error) {
+        } catch (error: any) {
             res.status(400).json({ error: error.errors || error.message });
         }
     },
@@ -37,10 +37,10 @@ export const UserController = {
     async updateUser(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const data = userSchema.parse(req.body);
+            const data = userUpdateSchema.parse(req.body);
             const user = await User.updateUser(id, data);
             res.status(201).json(user);
-        } catch (error) {
+        } catch (error: any) {
             res.status(400).json({ error: error.errors || error.message });
         }
     },
@@ -50,7 +50,7 @@ export const UserController = {
             const { id } = req.params;
             await User.deleteUser(id);
             res.status(200).json({ message: "User deleted" });
-        } catch (error) {
+        } catch (error: any) {
             res.status(400).json({ error: error.errors || error.message });
         }
     }

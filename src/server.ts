@@ -2,7 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import { config } from "dotenv";
 import cors from "cors";
-import { router } from "./routes/UserRoutes";
+import { router } from "./routes/UserRoutes.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerDoc from "./docs/swagger.json" with { type: "json" };
 
 config();
 
@@ -10,6 +12,8 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;

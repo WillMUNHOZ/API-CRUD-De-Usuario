@@ -1,5 +1,5 @@
-import { User } from "../models/User"
-import { IUser } from "../models/IUser";
+import { User } from "../models/User.js"
+import { IUser } from "../models/IUser.js";
 
 
 export const UserRepository = {

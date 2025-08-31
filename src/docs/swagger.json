@@ -1,0 +1,266 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API CRUD de Usuários",
+        "description": "Essa API tem como objetivo a manipuilação de usuários.",
+        "version": "1.0.0"
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Rotas para autenticação e registro de usuários."
+        },
+        {
+            "name": "Users",
+            "description": "Gerenciamento de recursos de usuários (CRUD)."
+        }
+    ],
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Nome completo do usuário.",
+                        "example": "João da Silva"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Endereço de e-mail único do usuário.",
+                        "example": "joao@email.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "description": "Senha do usúario. Deve ser armazenada de forma segura (hash).",
+                        "example": "senha_segura123"
+                    }
+                }
+            },
+            "Login": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Endereço de e-mail do usuário.",
+                        "example": "joao@email.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "description": "Senha do usúario.",
+                        "example": "senha_segura123"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "summary": "Cadastro de usuário",
+                "description": "Essa rota será responsável por cadastrar um novo usuário.",
+                "tags": [
+                    "Authentication"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            },
+                            "examples": {
+                                "user": {
+                                    "value": {
+                                        "name": "William",
+                                        "email": "william@email.com",
+                                        "password": "will123"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Operação bem-sucedida."
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "summary": "Login do usuário",
+                "description": "Essa rota será de login do usuário e irá devolver um token para autenficação.",
+                "tags": [
+                    "Authentication"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Login"
+                            },
+                            "examples": {
+                                "user": {
+                                    "value": {
+                                        "email": "william@email.com",
+                                        "password": "will123"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "summary": "Listar todos os usuários",
+                "description": "Essa rota será responsável por listar todos os usuários cadastrados.",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de usuários."
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "summary": "Listar usuário",
+                "description": "Essa rota será responsável por listar um único usuário cadastrado.",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Operação bem-sucedida."
+                    }
+                }
+            },
+            "put": {
+                "summary": "Atualizar usuário",
+                "description": "Essa rota será responsável por atualizar um usuário existente.",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            },
+                            "examples": {
+                                "user": {
+                                    "value": {
+                                        "name": "William",
+                                        "email": "william@email.com",
+                                        "password": "will123"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuário atualizado com sucesso."
+                    },
+                    "404": {
+                        "description": "Usúario não encontrado."
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Deletar usuário",
+                "description": "Essa rota será responsável por deletar um usuário existente.",
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário exluido com sucesso."
+                    },
+                    "404": {
+                        "description": "Usúario não encontrado."
+                    }
+                }
+            }
+        }
+    }
+}
