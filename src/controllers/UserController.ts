@@ -1,10 +1,31 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService.js";
-import { userSchema, userUpdateSchema } from "../schemas/userSchema.js";
+import { registerSchema, userUpdateSchema, loginSchema } from "../schemas/userSchema.js";
 
 const User = new UserService();
 
 export const UserController = {
+    async login(req: Request, res: Response) {
+        try {
+            const credentials = loginSchema.parse(req.body);
+            const token = await User.login(credentials);
+            console.log(token)
+            res.status(200).json(token);
+        } catch (error: any) {
+            res.status(400).json({ error: error.errors || error.message });
+        }
+    },
+
+    async register(req: Request, res: Response) {
+        try {
+            const data = registerSchema.parse(req.body);
+            const user = await User.createUser(data);
+            res.status(201).json(user);
+        } catch (error: any) {
+            res.status(400).json({ error: error.errors || error.message });
+        }
+    },
+
     async getAll(req: Request, res: Response) {
         try {
             const users = await User.getAllUsers();
@@ -19,16 +40,6 @@ export const UserController = {
             const { id } = req.params;
             const user = await User.getUserById(id);
             res.status(200).json(user);
-        } catch (error: any) {
-            res.status(400).json({ error: error.errors || error.message });
-        }
-    },
-
-    async createUser(req: Request, res: Response) {
-        try {
-            const data = userSchema.parse(req.body);
-            const user = await User.createUser(data);
-            res.status(201).json(user);
         } catch (error: any) {
             res.status(400).json({ error: error.errors || error.message });
         }

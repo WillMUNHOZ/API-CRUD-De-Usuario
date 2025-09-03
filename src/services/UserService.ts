@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
-import { UserRepository } from "../repositories/UserRepository"
-import { IUser } from "../models/IUser";
+import { UserRepository } from "../repositories/UserRepository.js"
+import { IUser } from "../models/IUser.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export class UserService {
     async getAllUsers() {
@@ -77,5 +78,32 @@ export class UserService {
         };
 
         return UserRepository.delete(id);
-    };
+    }
+
+    async login(credentials: Partial<IUser>) {
+        const { email, password } = credentials;
+        if (!email || !password) {
+            throw new Error("Email and password are required.");
+        }
+
+        const user = await UserRepository.findByEmail(email)
+        if (!user) {
+            throw new Error("Invalid email or password");
+        }
+
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            throw new Error("Invalid email or password");
+        }
+
+        const JWT_SECRET = process.env.JWT_SECRET;
+
+        if (!JWT_SECRET) {
+            throw new Error("JWT_SECRET is required");
+        }
+
+        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+
+        return token
+    }
 }

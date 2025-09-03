@@ -132,6 +132,11 @@
                             }
                         }
                     }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Token do usuário."
+                    }
                 }
             }
         },

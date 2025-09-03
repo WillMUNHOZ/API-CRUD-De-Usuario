@@ -12,7 +12,7 @@ export const UserRepository = {
     },
 
     async findByEmail(email: string) {
-        return await User.findOne({ email }).select("-password");
+        return await User.findOne({ email });
     },
 
     async create(data: IUser) {
