@@ -5,6 +5,7 @@ import cors from "cors";
 import { router } from "./routes/UserRoutes.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerDoc from "./docs/swagger.json" with { type: "json" };
+import { errorHandlerMiddleware } from "./middleware/errorHandlerMiddleware.js";
 
 config();
 
@@ -17,15 +18,17 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
+const JWT_SECRET = process.env.JWT_SECRET
 
-if (!MONGO_URI) {
-    console.error("❌ The MONGO_URI variable is not defined in the .env file");
-    process.exit(1);
+if (!MONGO_URI || !JWT_SECRET) {
+    throw new Error("❌ Environment variables are missing. Please ensure MONGO_URI and JWT_SECRET are defined in your .env file");
 };
 
 app.get("/", (req, res) => res.send("🚀 Server initialized!"));
 
 app.use(router);
+
+app.use(errorHandlerMiddleware);
 
 mongoose
     .connect(MONGO_URI)

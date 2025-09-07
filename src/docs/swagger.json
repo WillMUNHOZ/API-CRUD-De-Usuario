@@ -2,9 +2,15 @@
     "openapi": "3.0.0",
     "info": {
         "title": "API CRUD de Usuários",
-        "description": "Essa API tem como objetivo a manipuilação de usuários.",
+        "description": "Essa API tem como objetivo a manipulação de usuários.",
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "http://localhost:3000/api",
+            "description": "Servidor local"
+        }
+    ],
     "tags": [
         {
             "name": "Authentication",
@@ -41,6 +47,37 @@
                         "format": "password",
                         "description": "Senha do usúario. Deve ser armazenada de forma segura (hash).",
                         "example": "senha_segura123"
+                    }
+                }
+            },
+            "UserPublic": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "type": "string",
+                        "description": "O id único do usuário.",
+                        "example": "68b1c234260a1ddd248dba0f"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nome completo do usuário.",
+                        "example": "João da Silva"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Endereço de e-mail do usuário.",
+                        "example": "joao@email.com"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "description": "Data que o usuário foi registrado.",
+                        "example": "2025-08-31T12:12:01.802Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "description": "Data que o usuário foi atualizado.",
+                        "example": "2025-08-31T12:12:01.802Z"
                     }
                 }
             },
@@ -104,6 +141,15 @@
                 "responses": {
                     "201": {
                         "description": "Operação bem-sucedida."
+                    },
+                    "401": {
+                        "description": "Dados ausentes ou em formato incorreto."
+                    },
+                    "409": {
+                        "description": "E-mail já cadastrado."
+                    },
+                    "500": {
+                        "description": "Erro do servidor interno."
                     }
                 }
             }
@@ -111,7 +157,7 @@
         "/auth/login": {
             "post": {
                 "summary": "Login do usuário",
-                "description": "Essa rota será de login do usuário e irá devolver um token para autenficação.",
+                "description": "Essa rota será de login do usuário e irá devolver um token para autenticação.",
                 "tags": [
                     "Authentication"
                 ],
@@ -135,7 +181,29 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Token do usuário."
+                        "description": "Token do usuário.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "E-mail e senha são obrigatórios."
+                    },
+                    "401": {
+                        "description": "E-mail ou senha inválidos."
+                    },
+                    "500": {
+                        "description": "Erro do servidor interno."
                     }
                 }
             }
@@ -154,7 +222,23 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Lista de usuários."
+                        "description": "Lista de usuários.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserPublic"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Acesso não autorizado."
+                    },
+                    "500": {
+                        "description": "Erro do servidor interno."
                     }
                 }
             }
@@ -182,14 +266,33 @@
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Operação bem-sucedida."
+                    "200": {
+                        "description": "Detalhes de um único usuário.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserPublic"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Id inválido."
+                    },
+                    "401": {
+                        "description": "Acesso não autorizado."
+                    },
+                    "404": {
+                        "description": "Usúario não encontrado."
+                    },
+                    "500": {
+                        "description": "Erro do servidor interno."
                     }
                 }
             },
             "put": {
                 "summary": "Atualizar usuário",
-                "description": "Essa rota será responsável por atualizar um usuário existente.",
+                "description": "Essa rota será responsável por atualizar um usuário existente. Todos os campos (nome, email e senha) podem ser atualizados.",
                 "tags": [
                     "Users"
                 ],
@@ -231,8 +334,17 @@
                     "200": {
                         "description": "Usuário atualizado com sucesso."
                     },
+                    "400": {
+                        "description": "Id inválido or data missing or in wrong format."
+                    },
+                    "401": {
+                        "description": "Acesso não autorizado."
+                    },
                     "404": {
-                        "description": "Usúario não encontrado."
+                        "description": "Usuário não encontrado."
+                    },
+                    "500": {
+                        "description": "Erro do servidor interno."
                     }
                 }
             },
@@ -259,10 +371,19 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Usuário exluido com sucesso."
+                        "description": "Usuário excluído com sucesso."
+                    },
+                    "400": {
+                        "description": "Id inválido or data missing or in wrong format."
+                    },
+                    "401": {
+                        "description": "Acesso não autorizado."
                     },
                     "404": {
                         "description": "Usúario não encontrado."
+                    },
+                    "500": {
+                        "description": "Erro do servidor interno."
                     }
                 }
             }

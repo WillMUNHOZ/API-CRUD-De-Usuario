@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { StatusCodes } from "http-status-codes";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 interface AuthRequest extends Request {
@@ -12,7 +13,7 @@ interface MyJwtPayload extends JwtPayload {
 export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-        return res.status(401).json({ error: "Token not provided." })
+        return res.status(StatusCodes.UNAUTHORIZED).json({ error: "Unauthorized access." })
     };
 
     const token = authHeader.split(" ")[1];
@@ -27,6 +28,6 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
         req.userId = decoded.id;
         next();
     } catch (error) {
-        res.status(401).json({ error: "Invalid token." });
+        res.status(StatusCodes.UNAUTHORIZED).json({ error: "Invalid token." });
     }
 } 
