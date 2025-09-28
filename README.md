@@ -107,3 +107,8 @@ src/
 ## Tratamento de Erros
 
 A API utiliza um middleware de tratamento de erros para capturar e retornar erros de forma padronizada. Os erros são retornados com um status code e uma mensagem de erro.
+
+<br/><br/>
+
+<img width="1450" height="833" alt="image" src="https://github.com/user-attachments/assets/91d79a4f-959c-4813-b0fa-71756457a157" />
+
